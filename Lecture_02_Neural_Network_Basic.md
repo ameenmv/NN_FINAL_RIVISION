@@ -78,6 +78,7 @@ y = f(a)                   ← الـ activation function بتطبّق على a
 
 ```
 σ(x) = 1 / (1 + e^(-x))
+σ'(x) = σ(x) * (1 - σ(x))       ← المشتقة (مهمة جداً في Backprop)
 ```
 
 | الخاصية | التفاصيل |
@@ -87,34 +88,40 @@ y = f(a)                   ← الـ activation function بتطبّق على a
 | **الـ Threshold** | لو القيمة ≥ 0.5 → output = 1, لو أقل من 0.5 → output = 0 |
 | **المشاكل** | **Vanishing Gradient** + حسابياً مكلف |
 
-> مهم جداً حفظ المعادلة دي.
+> مهم جداً حفظ المعادلة دي والمشتقة بتاعتها.
 
 **مشكلة الـ Vanishing Gradient:**
-لما القيم تكون كبيرة أوي أو صغيرة أوي، التغيير في الـ prediction بيكون **شبه معدوم** — يعني الـ update في الـ weight قليل جداً فمفيش أي learn جديد.
+لما x = 10 → σ(x) ≈ 1 → σ'(x) = 1*(1-1) = **0** ← مفيش gradient!
+لما x = -10 → σ(x) ≈ 0 → σ'(x) = 0*(1-0) = **0** ← مفيش gradient!
+yعني لما القيم تكون كبيرة أوي أو صغيرة أوي، الـ gradients بتختفي والـ weights مبتتغيرش — وده بيخلي التعلم بطيء أوي.
 
 ### 4. Hyperbolic Tangent (Tanh):
 
 ```
 tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+       = (e^(2x) - 1) / (e^(2x) + 1)
+tanh'(x) = 1 - tanh(x)²                    ← المشتقة
 ```
 
 | الخاصية | التفاصيل |
 |---------|----------|
 | **الـ Output** | بين **-1 و 1** |
 | **الميزة** | **Zero-centered** — بيؤدي لـ convergence أسرع من Sigmoid |
-| **العيب** | لسه بيعاني من **Vanishing Gradient** عند القيم العالية/المنخفضة |
+| **العيب** | لسه بيعاني من **Vanishing Gradient** عند القيم العالية/المنخفضة — saturates in both directions |
 
 ### 5. ReLU (Rectified Linear Unit):
 
 ```
 f(x) = max(0, x)
+f'(x) = 1   if x > 0
+       = 0   if x ≤ 0              ← المشتقة
 ```
 
 | الخاصية | التفاصيل |
 |---------|----------|
 | **الـ Output** | **0** لو x ≤ 0، و **x** لو x > 0 |
-| **المميزات** | يشجع **sparse activations**، أسرع في الـ convergence، بيتجنب vanishing gradient |
-| **المشكلة** | **Dying ReLU** — لو النيورون طلع 0، ممكن يتوقف عن التعلم نهائي |
+| **المميزات** | **Non-saturating** لـ x>0, يشجع **sparse activations** (~50% فقط active), أسرع في الـ convergence, **حسابياً بسيط** |
+| **المشكلة** | **Dying ReLU** — لو الـ input سالب أو صفر، الـ gradient بيبقى 0 والنيورون بيتوقف عن التعلم |
 | **الحلول** | **Leaky ReLU** أو **Parametric ReLU** |
 
 > يعني أي قيمة أصغر من 0 بيخليها 0، غير كده بيسيبها زي ما هي.
@@ -196,6 +203,15 @@ f(x) = max(0, x)
 - بتقدر تعالج **بالتوازي** (مش زي RNN)
 - بنية **Encoder-Decoder**
 - بتستخدم في موديلات زي **BERT, GPT**
+
+---
+
+## Multiple Output Units — One-vs-All
+
+لو عندنا **أكتر من class** (مثلاً: pedestrian, car, motorcycle, truck):
+- بنحتاج **output unit لكل class**
+- كل unit بيتعلم يفرق class واحد عن الباقي
+- يعني لو عندنا 4 classes، هيبقى عندنا **4 output neurons**
 
 ---
 

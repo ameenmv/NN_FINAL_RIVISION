@@ -86,6 +86,17 @@ J(θ₀, θ₁) = (1/2m) * Σ(h(xⁱ) - yⁱ)²
 4. كرر لحد ما توصل للـ convergence (أقل قيمة)
 ```
 
+### الـ Gradient للـ Linear Regression:
+
+```
+تكرار لحد الـ convergence:
+  θ₀ := θ₀ - α * (1/m) * Σ(h(xⁱ) - yⁱ)
+  θ₁ := θ₁ - α * (1/m) * Σ(h(xⁱ) - yⁱ) * xⁱ
+  (لازم يتعملوا simultaneously update!)
+```
+
+> ❗ **مهم:** لازم نعمل update لكل الـ parameters **في نفس الوقت** (بنحسب القيم الجديدة كلها الأول، وبعدين نعمل assign). لو عملنا update لـ θ₀ الأول وبعدين استخدمناه في حساب θ₁ — النتيجة هتبقى **غلط**.
+
 ---
 
 ## الـ Learning Rate (α)
@@ -130,7 +141,36 @@ x_normalized = (x - x_min) / (x_max - x_min)
 > بيحوّل القيم لنطاق بين **0 و 1** (أو **-1 و 1**).
 
 ### ليه مهم؟
-لو feature واحد قيمته من 0 لـ 1000 وfeature تاني من 0 لـ 1، الـ gradient descent هيبقى بطيء وغير متوازن. الـ scaling بيخلي كل الـ features في نفس المستوى.
+لو feature واحد قيمته من 0 لـ 2000 وfeature تاني من 0 لـ 5، الـ gradient descent هيبقى بطيء وغير متوازن. الـ scaling بيخلي كل الـ features في نفس المستوى.
+
+### طرق الـ Normalization:
+
+```
+1. Min-Max Normalization (0 لـ 1):    x' = (x - min) / (max - min)
+2. Min-Max Normalization (-1 لـ 1):   x' = 2 * (x - min) / (max - min) - 1
+3. Z-Score (Mean Normalization):       x' = (x - μ) / σ
+   حيث μ = المتوسط، σ = الانحراف المعياري
+```
+
+---
+
+## Multivariate Linear Regression
+
+لما يكون عندنا **أكتر من feature** (مثلاً: مساحة، عدد غرف، عدد أدوار، عمر البيت):
+
+```
+h(x) = θ₀ + θ₁x₁ + θ₂x₂ + ... + θₙxₙ = θᵀx
+```
+
+### الـ Gradient Descent للـ Multivariate:
+
+```
+تكرار لحد الـ convergence:
+  θⱼ := θⱼ - α * (1/m) * Σ(h(xⁱ) - yⁱ) * xⱼⁱ
+  (لكل j من 0 لـ n — simultaneously update)
+```
+
+> يعني ببساطة: نفس الفكرة بالظبط بس بنعملها لكل feature (x₁, x₂, ..., xₙ).
 
 ---
 
@@ -173,6 +213,14 @@ J(θ) = -(1/m) * Σ[ yⁱ * log(h(xⁱ)) + (1 - yⁱ) * log(1 - h(xⁱ)) ]
 لأن لو استخدمنا MSE مع Sigmoid، الـ cost function هتبقى **non-convex** (فيها local minima كتير) — الـ gradient descent مش هيوصل للـ global minimum.
 
 الـ **Log Loss** بتضمن إن الـ cost function تكون **convex** — يعني ليها minimum واحد بس.
+
+### Gradient Descent للـ Logistic Regression:
+
+```
+θⱼ := θⱼ - α * (1/m) * Σ(h(xⁱ) - yⁱ) * xⱼⁱ
+```
+
+> ❗ الصيغة شكلها **زي الـ Linear Regression بالظبط**، بس الفرق إن h(x) هنا = σ(θᵀx) مش θᵀx. ده بيطلع من اشتقاق الـ Log Loss.
 
 ---
 

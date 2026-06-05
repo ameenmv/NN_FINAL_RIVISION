@@ -27,6 +27,14 @@ Backward:  Input ← Hidden₁ ← Hidden₂ ← ... ← Output
            (update weights using gradients)
 ```
 
+### Batch Mode vs Online (Stochastic) Mode:
+
+| النوع | الوصف | الـ Loss |
+|------|-------|----------|
+| **Batch Mode** | بنحسب الـ gradient على **كل الـ examples** وبعدين نعمل update | E_av = (1/N) Σ E(n) |
+| **Online/Stochastic** | بنعمل update **بعد كل example** | E(n) |
+| **Mini-batch** | بنعمل update بعد **مجموعة صغيرة** من الـ examples | الأكتر شيوعاً |
+
 ---
 
 ## الـ Chain Rule
@@ -49,6 +57,26 @@ L = -(y*log(a) + (1-y)*log(1-a))   ← الـ loss
 dL/dw = dL/da * da/dz * dz/dw
       = (a - y) * x
 ```
+
+### الـ Backpropagation Algorithm (الخوارزمية كاملة):
+
+```
+1. Initialize كل الـ weights بقيم عشوائية صغيرة
+2. لكل training example (x, t):
+   الـ Forward Phase:
+   - دخّل الـ input (x₁, ..., xₙ) واحسب الـ outputs aₖ
+   الـ Backward Phase:
+   - لكل output unit k:
+     δₖ = aₖ(1 - aₖ)(aₖ - tₖ)
+   - لكل hidden unit j:
+     δⱼ = aⱼ(1 - aⱼ) × Σₖ(δₖ × wⱼₖ)
+   - حدّث الـ weights:
+     wᵢⱼ = wᵢⱼ - α × δⱼ × aᵢ
+     w₀ⱼ = w₀ⱼ - α × δⱼ         (Bias)
+```
+
+> الـ **δₖ** = الـ error signal للـ output layer (= aₖ(1-aₖ)(aₖ-tₖ))
+> الـ **δⱼ** = الـ error signal للـ hidden layer (بيعتمد على δₖ بتاع الـ layers اللي بعده)
 
 ---
 

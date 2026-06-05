@@ -72,6 +72,12 @@ w(new) = w(old) + ∆w
 3. كرر على كل الـ examples
 ```
 
+### قيود Hebb:
+- كل training sample بيتستخدم **مرة واحدة بس**
+- لو الـ data **binary** → بنستخدم **binary step function**
+- لو الـ data **bipolar** (-1, 1) → بنستخدم **sign function**
+- ❗ **مش بيقدر** يتعلم حاجات زي x1 ∧ x2 ∧ x3 حتى لو linearly separable — محتاجين **error-driven methods** أقوى
+
 ---
 
 ## الـ Perceptron (1957)
@@ -141,6 +147,18 @@ if y ≠ t:
 | **الـ Output** | binary | binary | binary | continuous |
 | **الـ Error** | — | — | (t - y) بعد activation | (t - net) قبل activation |
 | **الأساس** | logic gates | correlation | error correction | gradient descent |
+
+---
+
+## MADALINE — Many Adaline (1960, 1987)
+
+الـ **MADALINE** هي شبكة من **أكتر من Adaline** مرتبين في multilayer net.
+
+| الخاصية | التفاصيل |
+|---------|----------|
+| **MRI** | بس الـ weights بتاعة الـ hidden Adalines بتتعدل، الـ output weights **ثابتة** |
+| **MRII** | **كل** الـ weights في الشبكة بتتعدل |
+| **Activation** | Thresholding function بتتستخدم في التدريب والاختبار |
 
 ---
 
