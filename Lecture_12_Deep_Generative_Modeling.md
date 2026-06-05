@@ -14,6 +14,9 @@
 
 > يعني الـ Discriminative بيجاوب على "ده إيه؟" — لكن الـ Generative بيقدر يعمل حاجة **جديدة من الأول**.
 
+### Latent Variable Models:
+الـ **Latent Variables** هي متغيرات **مش بنشوفها مباشرة** بس بنستنتجها من البيانات. في الـ Generative Models، بتمثل الـ **compressed factors** بتاعة الـ data. لما بنغيرها، بنقدر نولّد data جديدة.
+
 ---
 
 ## Autoencoders
@@ -98,6 +101,18 @@ L = Reconstruction Loss + KL Divergence
 
 > الـ Reparameterization Trick عشان نقدر نعمل backpropagation عبر عملية الـ sampling — بنحوّلها لعملية حسابية.
 
+### خصائص الـ VAE Latent Space (من الكتاب):
+
+| الخاصية | الوصف |
+|---------|-------|
+| **Continuity** | نقطتين قريبتين في الـ latent space → بيطلعوا **outputs متشابهين** |
+| **Completeness** | أي نقطة في الـ latent space بتطلّع **output ليه معنى** — مفيش "فراغات" |
+
+> Common prior: **p(z) = N(μ=0, σ²=1)** — بيشجّع الـ encodings تتوزع بالتساوي حول المركز، وبيمنع الشبكة من إنها تحفظ الـ data في مناطق محددة.
+
+### Perturbing Latent Variables:
+لو غيرنا dimension واحد في الـ latent space وثبتنا الباقي → بنشوف **تغيير معين** في الـ output (مثلاً: زاوية الرأس، الابتسامة). كل dimension بيمثل **interpretable feature** مختلف.
+
 ---
 
 ## Generative Adversarial Networks (GANs)
@@ -143,6 +158,35 @@ min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
 | **Training Instability** | التدريب ممكن يكون **مش مستقر** — الـ G والـ D ممكن ميتوازنوش |
 | **Vanishing Gradient** | لو الـ D بقى كويس أوي بسرعة، الـ G مش هيتعلم |
 
+### Cross-Entropy اللي الـ GAN مبني عليها (من الكتاب):
+
+```
+Binary Cross-Entropy:
+H = -y₁ log D(x₁) - (1-y₁) log(1 - D(x₁))
+```
+
+### Improved GAN Objective:
+الـ objective الأصلي: `min_G log(1 - D(G(z)))` بيكون flat لما الـ sample فعلاً fake.
+**الحل**: `max_G log D(G(z))` — نفس الهدف بس بـ **gradient أعلى** للـ bad samples.
+
+### GAN Training Algorithm (الخوارزمية كاملة من الكتاب):
+
+```
+for number of training iterations:
+  for k steps:  (تدريب D)
+    - Sample m noise: zⁱ ~ p(z)
+    - Sample m real data: xⁱ ~ p_data(x)
+    - Gradient ASCENT on D:
+      ∇_θd (1/m) Σ [log D(xⁱ) + log(1 - D(G(zⁱ)))]
+
+  (تدريب G)
+  - Sample m noise: zⁱ ~ p(z)
+  - Gradient ASCENT on G (improved objective):
+    ∇_θg (1/m) Σ log D(G(zⁱ))
+```
+
+> Ian Goodfellow et al., "Generative Adversarial Nets", NIPS 2014
+
 ---
 
 ## تطبيقات الـ Generative Models
@@ -159,6 +203,20 @@ min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
 
 ---
 
+## DCGAN — Deep Convolutional GAN
+
+الـ **DCGAN** هو GAN مبني على Convolutional layers بقواعد معينة (من الكتاب):
+
+| القاعدة | التفاصيل |
+|---------|----------|
+| **Pooling** | بنستبدله بـ **strided convolutions** (D) و **fractional-strided convolutions** (G) |
+| **BatchNorm** | في **الاتنين** G و D |
+| **FC Layers** | بنشيلها للـ deeper architectures |
+| **Activation (G)** | **ReLU** في كل الطبقات، ماعدا الأخيرة = **Tanh** |
+| **Activation (D)** | **LeakyReLU** في كل الطبقات |
+
+---
+
 ## مقارنة — Autoencoder vs VAE vs GAN
 
 | الخاصية | Autoencoder | VAE | GAN |
@@ -169,6 +227,17 @@ min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
 | **جودة التوليد** | ⭐ | ⭐⭐ | ⭐⭐⭐ |
 | **سهولة التدريب** | ⭐⭐⭐ | ⭐⭐ | ⭐ (صعب) |
 | **التنوع** | — | ⭐⭐⭐ | ⭐⭐ (mode collapse) |
+
+---
+
+## GANs — الملخص النهائي (من الكتاب):
+
+| | التفاصيل |
+|---|----------|
+| **الفكرة** | مفيش explicit density function — game-theoretic approach |
+| **Pros** | State-of-the-art sample quality! |
+| **Cons** | صعب في التدريب، مش بيقدر يحسب p(x) أو p(z|x) |
+| **Active Research** | Wasserstein GAN, LSGAN, Conditional GANs |
 
 ---
 
