@@ -76,8 +76,14 @@
 
 | الخاصية | Shallow | Deep |
 |---------|---------|------|
-| **Feature Extraction** | يدوي | تلقائي |
+| **Feature Extraction** | يدوي (SIFT, HOG) | تلقائي |
 | **الأداء** | كويس على بيانات بسيطة | ممتاز على بيانات معقدة |
+
+## Why Now? — ليه DL انتشر دلوقتي؟
+
+1. **Big Data** — بيانات أكتر متاحة
+2. **Hardware (GPUs)** — حسابات متوازية أسرع بـ 50x
+3. **Software** — TensorFlow, PyTorch + تقنيات محسّنة
 
 ---
 
@@ -108,6 +114,14 @@ xn ──wn──┘
 | **ReLU** | [0, +∞) | سريع، لا vanishing | dying ReLU |
 | **Leaky ReLU** | (-∞, +∞) | بيحل dying ReLU | — |
 | **Softmax** | (0, 1) مجموعهم 1 | multi-class classification | — |
+
+### المشتقات:
+
+```
+σ'(x)    = σ(x)(1 - σ(x))
+tanh'(x) = 1 - tanh(x)²
+ReLU'(x) = 1 if x > 0, else 0
+```
 
 ---
 
@@ -151,6 +165,13 @@ x_normalized = (x - x_min) / (x_max - x_min)
 |------------|---------------------|
 | **α كبير أوي** | **بيتخطى الـ minimum (overshoot)** |
 
+## Multivariate Linear Regression
+
+```
+h(x) = θ₀ + θ₁x₁ + θ₂x₂ + ... + θₙxₙ = θᵀx
+θⱼ := θⱼ - α * (1/m) * Σ(h(xⁱ) - yⁱ) * xⱼⁱ   (لكل j — simultaneously)
+```
+
 ---
 
 ---
@@ -168,6 +189,9 @@ x_normalized = (x - x_min) / (x_max - x_min)
 | **القاعدة** | threshold يدوي | ∆w = x*y | ∆w = α(t-y)*x | ∆w = α(t-net)*x |
 | **الـ Output** | binary | binary | binary | continuous |
 | **الأساس** | logic gates | correlation | error correction | gradient descent |
+
+### MADALINE:
+- شبكة من أكتر من Adaline — **MRI** (بس hidden weights بتتعدل) / **MRII** (كل الـ weights)
 
 ---
 
@@ -211,6 +235,14 @@ x_normalized = (x - x_min) / (x_max - x_min)
 - **في الـ Testing**: مفيش dropout — الـ weights بتتضرب في (1-p)
 - **الفايدة**: يمنع overfitting ويحسّن generalization
 
+### Batch vs Online Mode:
+
+| النوع | الوصف |
+|------|-------|
+| **Batch** | update بعد كل الـ examples |
+| **Online/Stochastic** | update بعد كل example |
+| **Mini-batch** | update بعد مجموعة صغيرة |
+
 ---
 
 ---
@@ -242,6 +274,11 @@ Output Size = (N - F + 2P) / S + 1
 
 ```
 Layer 1: Edges → Layer 2: Textures → Layer 3: Parts → Layer 4: Objects
+```
+
+### BatchNormalization:
+```
+BN(x) = γ * (x - μ_B) / σ_B + β
 ```
 
 ---
@@ -303,7 +340,7 @@ Layer 1: Edges → Layer 2: Textures → Layer 3: Parts → Layer 4: Objects
 ## Segmentation
 
 - **Semantic**: FCN — Down sampling → Up sampling + Skip Connections
-- **Instance**: Mask R-CNN — Faster R-CNN + mask branch + ROI Align
+- **Instance**: Mask R-CNN — Faster R-CNN + mask branch + **ROI Align** (bilinear interpolation)
 
 ---
 
@@ -401,8 +438,8 @@ Attention(Q, K, V) = softmax(Q · Kᵀ / √d) · V
 | النوع | مثال | الاستخدام |
 |-------|------|-----------|
 | **Encoder-Decoder** | T5 | Translation, Summarization |
-| **Encoder-Only** | **BERT** | Classification, QA |
-| **Decoder-Only** | **GPT** | Text Generation |
+| **Encoder-Only** | **BERT** | Classification, QA (MLM + NSP) |
+| **Decoder-Only** | **GPT** | Text Generation (next token) |
 
 ---
 
@@ -430,6 +467,7 @@ min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
 
 - **Generator**: بيحاول يخدع الـ Discriminator
 - **Discriminator**: بيحاول يكشف المزيف
+- **DCGAN**: strided convs, BatchNorm, ReLU (G) / LeakyReLU (D), Tanh output
 
 ---
 
@@ -489,6 +527,23 @@ L = ||x - x̂||² + KL(q(z|x) || p(z))
 
 -- GAN Objective --
 min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
+
+-- Sigmoid Derivative --
+σ'(x) = σ(x)(1 - σ(x))
+
+-- Multivariate Linear Regression --
+h(x) = θᵀx
+θⱼ := θⱼ - α(1/m)Σ(h(xⁱ)-yⁱ)xⱼⁱ
+
+-- BatchNormalization --
+BN(x) = γ(x-μ)/σ + β
+
+-- Layer Normalization --
+output = (x - μ) / (σ + ε) × γ + β
+
+-- Backprop δ formulas --
+δk = ak(1-ak)(ak-tk)          (output)
+δj = aj(1-aj)Σ(δk·wjk)        (hidden)
 ```
 
 ---
