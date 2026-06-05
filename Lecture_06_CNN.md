@@ -9,7 +9,20 @@
 
 الشبكات العادية (Fully Connected) مش عملية للصور — لو صورة 200×200×3 يبقى عندنا **120,000 weight** لنيورون واحد بس! ده كتير جداً ومش efficient.
 
-الـ **CNN** بتحل المشكلة دي عن طريق إنها **بتستغل الـ spatial structure** بتاع الصورة — بدل ما كل نيورون يبص على كل pixel، كل نيورون بيبص على **جزء صغير** (local region) من الصورة.
+الـ **CNN** بتحل المشكلة دي عن طريق إنها **بتستغل الـ spatial structure** بتاع الصورة.
+
+### مشاكل الـ Fully Connected للصور (من الكتاب):
+1. **عدد parameters ضخم** — 16×16 image + 100 hidden = 25,600+ weight
+2. **مفيش invariance** — لو الصورة اتحركت/اتكبرت مش هيتعرف عليها
+3. **بتضيّع الـ topology** — بتحوّل الصورة لـ vector وبتنسى علاقة الـ pixels ببعض
+
+### 3 خصائص الـ CNN الأساسية:
+
+| الخاصية | الوصف |
+|---------|-------|
+| **1. Local Connectivity** | كل نيورون متوصل بـ **subregion** صغيرة بس من الـ input (receptive field) |
+| **2. Parameter Sharing** | نفس الـ filter (نفس الـ weights) بيتحرك على الصورة كلها → features **equivariant** |
+| **3. Pooling/Subsampling** | بيقلل الحجم وبيدي درجة من الـ **translation invariance** |
 
 > يعني بدل ما الشبكة تشوف الصورة كلها مرة واحدة، بتشوفها حتة حتة وتستخرج الـ features المهمة.
 
@@ -94,6 +107,15 @@ Output = (32 - 5 + 0) / 1 + 1 = 28×28
 | **Valid (No Padding)** | مفيش padding — الـ output أصغر | Output < Input |
 | **Same Padding** | بنضيف padding عشان الـ output = الـ input | Output = Input |
 
+### Convolutions over Volumes (صور ملوّنة):
+
+لو الـ input عنده **3 channels** (RGB)، الـ filter لازم يكون عنده **نفس عدد الـ channels**:
+
+```
+Input: 6×6×3 * Filter: 3×3×3 → Output: 4×4×1
+الـ convolution بتتعمل per channel وبعدين بنجمع على كل الـ channels
+```
+
 ---
 
 ## 2. Pooling Layer
@@ -176,6 +198,24 @@ Layer 4: بتتعلم Objects (أشياء كاملة) — وش، عربية
 
 ### Depth:
 عدد الـ filters في الـ Conv layer بيحدد **عمق** الـ output — لو استخدمنا 32 filter، الـ output هيكون بعمق 32.
+
+---
+
+## BatchNormalization Layer
+
+الـ **Batch Normalization** هي تقنية بنستخدمها **بين الطبقات** عشان نسرّع التدريب ونقلل الحساسية للـ initialization.
+
+```
+BN(x) = γ * (x - μ_B) / σ_B + β
+```
+
+| الرمز | المعنى |
+|-------|--------|
+| **μ_B** | المتوسط للـ mini-batch |
+| **σ_B** | الانحراف المعياري للـ mini-batch |
+| **γ, β** | learnable parameters بتودي الـ scale والـ shift |
+
+> بتتحط بين الـ Conv layer والـ ReLU عشان تسرّع التدريب.
 
 ---
 

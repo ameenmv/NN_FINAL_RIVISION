@@ -31,6 +31,9 @@
 | **Softmax Loss** | عشان يتأكد إن **التصنيف** صح |
 | **L2 Loss** | عشان يضبط **مكان المربع** |
 
+### مثال: Human Pose Estimation
+بنمثل الـ pose كـ **14 نقطة مفصل** (joint positions): القدم اليمنى/الشمال، الركبة، الورك، الكتف، الكوع، اليد، الرقبة، أعلى الرأس. كل joint بيتوقع (x, y) + L2 Loss.
+
 ---
 
 ## Region Proposals
@@ -167,8 +170,15 @@ Input Image
 
 | الخاصية | التفاصيل |
 |---------|----------|
-| **الـ Output** | **3 حاجات**: نوع الجسم + المربع المحيط + الصورة الدقيقة (**mask**) |
+| **الـ Output** | **3 حاجات**: نوع الجسم + المربع المحيط + الصورة الدقيقة (**28×28 binary mask**) |
 | **ROI Align** | بيحل مشكلة التداخل في الـ masks (أفضل من ROI Pooling) |
+
+### RoI Pool vs RoI Align:
+
+| الطريقة | الوصف |
+|---------|-------|
+| **RoI Pool** | بيعمل **snap** للـ grid cells → misalignment صغير |
+| **RoI Align** | بيستخدم **bilinear interpolation** بدل الـ snapping → دقة أعلى |
 
 ---
 
@@ -191,6 +201,14 @@ Input Image
 | **Nearest Neighbor** | بيكرر قيم الـ pixels (بسيط وسريع) | ⭐ |
 | **Max Unpooling** | بيعكس الـ max pooling باستخدام الأماكن اللي اتذكرت | ⭐⭐ |
 | **Transpose Convolution** | بيزوّد الدقة بطريقة ذكية وقابلة للتعلم (الأدق) | ⭐⭐⭐ |
+
+### FCN Variants (Skip Connections):
+
+| النوع | الوصف | الدقة |
+|------|-------|-------|
+| **FCN-32s** | 32x upsampled prediction من الـ pool5 | الأقل دقة |
+| **FCN-16s** | دمج pool4 + 2x upsampled pool5 ثم 16x upsample | أحسن |
+| **FCN-8s** | دمج pool3 + pool4 + pool5 ثم 8x upsample | **الأدق** |
 
 ---
 

@@ -193,6 +193,25 @@ DenseNet:  L1 → L2 → L3 → L4
 | **الاتصال** | كل طبقة بتتصل بكل اللي قبلها (**concatenation**) |
 | **تقليل Parameters** | بيستخدم **1×1 conv (Bottleneck Layer)** قبل كل 3×3 |
 | **الميزة** | المعلومات بتتدفق بسهولة وبتقلل الضياع |
+| **Composition Layer** | BN → ReLU → 3×3 Conv |
+
+### DenseNet-B (Bottleneck):
+بيضيف **BN → ReLU → 1×1 Conv** قبل الـ 3×3 Conv عشان يقلل عدد الـ parameters.
+
+### Transition Layers:
+**1×1 Conv** متبوع بـ **2×2 average pooling** — بيقلل حجم الـ feature maps.
+
+### DenseNet-BC (Further Compression):
+لو Dense Block فيه m feature maps، الـ Transition Layer بيطلّع **θm** output maps حيث 0 < θ < 1 (الـ compression factor).
+
+### إصدارات DenseNet:
+
+| الإصدار | Layers |
+|---------|--------|
+| **DenseNet-121** | 6+12+24+16 dense layers |
+| **DenseNet-169** | 6+12+32+32 dense layers |
+| **DenseNet-201** | 6+12+48+32 dense layers |
+| **DenseNet-264** | 6+12+64+48 dense layers |
 
 ---
 
