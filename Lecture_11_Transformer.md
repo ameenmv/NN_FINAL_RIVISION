@@ -219,6 +219,11 @@ output = LayerNorm(x + SubLayer(x))
 
 بتنظّم القيم عشان التدريب يبقى **ثابت ومستقر**. بتشتغل على **كل كلمة لوحدها** مش على الـ batch كله.
 
+```
+μ = (1/d) × Σ xᵢ
+output = (x - μ) / (σ + ε) × γ + β
+```
+
 > في رسومات الـ Transformer بتلاقيها مكتوبة **"Add & Norm"** — وده يعني Residual Connection + Layer Normalization.
 
 ---
@@ -232,7 +237,7 @@ output = LayerNorm(x + SubLayer(x))
 | **الاستخدام** | Machine Translation, Summarization |
 | **الـ Encoder** | بيقرأ الجملة الأصلية (**bidirectional**) |
 | **الـ Decoder** | بيستخدم output الـ encoder + الكلمات اللي ترجمها لحد دلوقتي (**unidirectional**) |
-| **Cross-Attention** | الـ Decoder بيعمل attention على output الـ Encoder (Keys, Values من Encoder / Queries من Decoder) |
+| **Cross-Attention** | الـ Decoder بيعمل attention على output الـ Encoder: K = W_K × hᵢ (Encoder), V = W_V × hᵢ (Encoder), Q = W_Q × zᵢ (Decoder) |
 
 ### 2. Encoder-Only — BERT:
 
@@ -240,10 +245,20 @@ output = LayerNorm(x + SubLayer(x))
 |---------|----------|
 | **الاستخدام** | Classification, Extractive QA, Image Classification |
 | **الطريقة** | بيفهم الكلام بس — **مش بيولّد جمل** |
-| **التدريب** | **Masked Language Model** — بيشيل كلمات (Mask) والموديل يحاول يكمّلها |
-| **مهمة تانية** | **Next Sentence Prediction** — بيشوف جملتين ويسأل: التانية بتيجي بعد الأولى ولا لأ؟ |
+| **التدريب** | **Masked Language Model** — بيشيل 15% من الكلمات: 80% [MASK], 10% random word, 10% بتفضل زي ما هي |
+| **مهمة تانية** | **Next Sentence Prediction (NSP)** — بيشوف جملتين ويسأل: التانية بتيجي بعد الأولى ولا لأ؟ |
+| **الإصدارات** | **BERT-BASE** (12 layers) و **BERT-LARGE** (24 layers) |
 
-> موديلات الـ Encoder بس زي **BERT** مش بتولّد جمل — هي بتفهم الكلام بس. بتستخدم في تصنيف الجمل والأسئلة وغيرها.
+### تطبيقات BERT (Fine-tuning):
+
+| النوع | المهمة |
+|------|-------|
+| **Sentence Classification** | SST-2 (sentiment), CoLA (linguistic acceptability) |
+| **Sentence Pair** | MNLI, QQP (question pairs), QNLI, STS-B, MRPC, RTE, SWAG |
+| **Token-level** | CoNLL NER (Named Entity Recognition) |
+| **Question Answering** | SQuAD v1 — الإجابة = **span** من الـ paragraph |
+
+> موديلات الـ Encoder بس زي **BERT, RoBERTa** مش بتولّد جمل — هي بتفهم الكلام بس.
 
 ### 3. Decoder-Only — GPT:
 
@@ -254,7 +269,16 @@ output = LayerNorm(x + SubLayer(x))
 | **التدريب** | بيتوقع الـ **next token** في السلسلة |
 | **أمثلة** | GPT-2 (1.5B params), GPT-3 (175B params), ChatGPT |
 
-> موديلات الـ Decoder بس زي **GPT** بتشتغل على توليد النص. بتبص على الكلمات اللي قبل الكلمة وبتحاول تتوقع الكلمة الجاية. زي ما بيحصل في ChatGPT لما بيكتبلك رد.
+### إصدارات GPT-2:
+
+| الإصدار | Parameters | Model Dimensionality |
+|---------|------------|---------------------|
+| **Small** | 117M | 768 |
+| **Medium** | 345M | 1024 |
+| **Large** | 762M | 1280 |
+| **Extra-Large** | 1542M | 1600 |
+
+> موديلات الـ Decoder بس زي **GPT** بتشتغل على توليد النص. بتبص على الكلمات اللي قبل الكلمة وبتحاول تتوقع الكلمة الجاية.
 
 ---
 

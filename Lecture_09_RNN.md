@@ -59,7 +59,10 @@ y(t) = W_hy * h(t) + b_y                          ← الـ output
 | **W_xh** | weights من input لـ hidden |
 | **W_hy** | weights من hidden لـ output |
 
-> بتاخد الحالة السابقة من الـ hidden layer وتدخلها مع المدخل الجديد. الـ hidden layers بتخزن المعلومات اللي فاتت. ممكن نفردها على الزمن لفهم تطور الحالات.
+> بتاخد الحالة السابقة من الـ hidden layer وتدخلها مع المدخل الجديد. الـ hidden layers بتخزن المعلومات اللي فاتت.
+
+### الـ Parameter Sharing:
+الـ RNN بتستخدم **نفس الـ weights** (W, U, V) في **كل خطوة زمنية** — ده بيخليها تقدر تتعامل مع sequences بأطوال مختلفة. لو مفيش parameter sharing، كنا هنحتاج weights مختلفة لكل طول sequence — ومش هنقدر نعمم على أطوال ماشفناهاش.
 
 ---
 
@@ -110,7 +113,20 @@ One-to-One:    One-to-Many:    Many-to-One:    Many-to-Many:
 | المشكلة | متى بتحصل | النتيجة |
 |---------|-----------|---------|
 | **Vanishing Gradient** | لما أكبر **eigenvalue (λ)** لمصفوفة الأوزان W **أقل من 1** | التدرجات صغيرة جداً → الموديل مش بيتعلم على التسلسلات الطويلة |
-| **Exploding Gradient** | لما أكبر **eigenvalue (λ)** لمصفوفة الأوزان W **أكبر من 1** | التدرجات كبيرة جداً → أخطاء وبيعمل skip لبعض الأجزاء |
+| **Exploding Gradient** | لما أكبر **eigenvalue (λ)** لمصفوفة الأوزان W **أكبر من 1** | التدرجات كبيرة جداً → NaN/overflow |
+
+### التفسير الرياضي (من الكتاب):
+
+```
+dS_t/dS_k = ∏(i=k+1 to t) dS_i/dS_{i-1}
+
+dS_t/dS_{t-1} = diag(1 - tanh(...)^2) × W^T
+
+لو λ > 1 → الـ product بينفجر (explode)
+لو λ < 1 → الـ product بيختفي (vanish)
+```
+
+> يعني الـ gradient بيتضرب في مصفوفتين: W ومشتقات الـ activation function. تكرار الضرب ده لـ (t-k) مرة بيخلي الـ gradient ينفجر أو يختفي.
 
 ### مثال على تأثير الـ Vanishing:
 

@@ -151,7 +151,13 @@ Output:   [h⃗₁,h⃐₁] [h⃗₂,h⃐₂] [h⃗₃,h⃐₃] [h⃗₄,h⃐₄
  Person    O      O    Location
 ```
 
-> الـ Bidirectional RNN بتقرأ الجملة من الشمال واليمين لتمثيل أفضل. لكن محتاجة الـ **input sequence كلها** — مش مناسبة للـ real-time tasks.
+> الـ Bidirectional RNN بتقرأ الجملة من الشمال واليمين لتمثيل أفضل. لكن محتاجة الـ **input sequence كلها** — مش مناسبة للـ **Language Modeling** (لأنك بتتوقع الكلمة الجاية فمفيش right context).
+
+### Sentence Classification:
+للحصول على sentence encoding:
+- ممكن ناخد **element-wise max** أو **mean** لكل الـ hidden states
+- أو ناخد **آخر hidden state** بس
+- الـ max/mean غالباً بتدي نتائج **أحسن**
 
 ---
 
@@ -166,6 +172,7 @@ Output:   [h⃗₁,h⃐₁] [h⃗₂,h⃐₂] [h⃗₃,h⃐₃] [h⃗₄,h⃐₄
 | **Sentiment Analysis** | تحليل المشاعر — إيجابي ولا سلبي | Many-to-One |
 | **POS Tagging** | تحديد أنواع الكلمات (اسم، فعل...) | Many-to-Many (synced) |
 | **NER** | تحديد الكيانات (أسماء، أماكن...) | Many-to-Many (synced) |
+| **Handwriting Generation** | توليد خط يد باستخدام RNN (Graves, 2014) | One-to-Many |
 
 ---
 
