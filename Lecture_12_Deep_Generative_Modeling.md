@@ -101,7 +101,7 @@ L = Reconstruction Loss + KL Divergence
 
 > الـ Reparameterization Trick عشان نقدر نعمل backpropagation عبر عملية الـ sampling — بنحوّلها لعملية حسابية.
 
-### خصائص الـ VAE Latent Space (من الكتاب):
+### خصائص الـ VAE Latent Space:
 
 | الخاصية | الوصف |
 |---------|-------|
@@ -158,7 +158,7 @@ min_G max_D V(D,G) = E[log D(x)] + E[log(1 - D(G(z)))]
 | **Training Instability** | التدريب ممكن يكون **مش مستقر** — الـ G والـ D ممكن ميتوازنوش |
 | **Vanishing Gradient** | لو الـ D بقى كويس أوي بسرعة، الـ G مش هيتعلم |
 
-### Cross-Entropy اللي الـ GAN مبني عليها (من الكتاب):
+### Cross-Entropy اللي الـ GAN مبني عليها:
 
 ```
 Binary Cross-Entropy:
@@ -169,7 +169,7 @@ H = -y₁ log D(x₁) - (1-y₁) log(1 - D(x₁))
 الـ objective الأصلي: `min_G log(1 - D(G(z)))` بيكون flat لما الـ sample فعلاً fake.
 **الحل**: `max_G log D(G(z))` — نفس الهدف بس بـ **gradient أعلى** للـ bad samples.
 
-### GAN Training Algorithm (الخوارزمية كاملة من الكتاب):
+### GAN Training Algorithm (الخوارزمية كاملة):
 
 ```
 for number of training iterations:
@@ -205,7 +205,7 @@ for number of training iterations:
 
 ## DCGAN — Deep Convolutional GAN
 
-الـ **DCGAN** هو GAN مبني على Convolutional layers بقواعد معينة (من الكتاب):
+الـ **DCGAN** هو GAN مبني على Convolutional layers بقواعد معينة:
 
 | القاعدة | التفاصيل |
 |---------|----------|
@@ -230,7 +230,7 @@ for number of training iterations:
 
 ---
 
-## GANs — الملخص النهائي (من الكتاب):
+## GANs — الملخص النهائي:
 
 | | التفاصيل |
 |---|----------|

@@ -115,7 +115,7 @@ One-to-One:    One-to-Many:    Many-to-One:    Many-to-Many:
 | **Vanishing Gradient** | لما أكبر **eigenvalue (λ)** لمصفوفة الأوزان W **أقل من 1** | التدرجات صغيرة جداً → الموديل مش بيتعلم على التسلسلات الطويلة |
 | **Exploding Gradient** | لما أكبر **eigenvalue (λ)** لمصفوفة الأوزان W **أكبر من 1** | التدرجات كبيرة جداً → NaN/overflow |
 
-### التفسير الرياضي (من الكتاب):
+### التفسير الرياضي:
 
 ```
 dS_t/dS_k = ∏(i=k+1 to t) dS_i/dS_{i-1}

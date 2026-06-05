@@ -11,7 +11,7 @@
 
 الـ **CNN** بتحل المشكلة دي عن طريق إنها **بتستغل الـ spatial structure** بتاع الصورة.
 
-### مشاكل الـ Fully Connected للصور (من الكتاب):
+### مشاكل الـ Fully Connected للصور:
 1. **عدد parameters ضخم** — 16×16 image + 100 hidden = 25,600+ weight
 2. **مفيش invariance** — لو الصورة اتحركت/اتكبرت مش هيتعرف عليها
 3. **بتضيّع الـ topology** — بتحوّل الصورة لـ vector وبتنسى علاقة الـ pixels ببعض
